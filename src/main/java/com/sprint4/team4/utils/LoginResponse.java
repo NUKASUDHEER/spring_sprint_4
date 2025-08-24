@@ -11,6 +11,7 @@ public class LoginResponse {
     private String userId;
     private String userName;
     private String token;
+    
     @JsonProperty("isAdmin")
     private boolean isAdmin;
 }

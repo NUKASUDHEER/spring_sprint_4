@@ -2,8 +2,6 @@ package com.sprint4.team4.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import com.sprint4.team4.model.UserModel;
@@ -18,7 +16,7 @@ public class UserController {
 	@Autowired
 	private UserService userService;
 	
-	@GetMapping
+	@GetMapping("/")
 	public String greeting() {
 		return "Server is running on port 8080";
 	}
@@ -76,11 +74,4 @@ public class UserController {
 		return new ResponseEntity<>(res,HttpStatus.OK);
 	}
 	
-	
-	@GetMapping("/booking")
-	public ResponseEntity<String> userGreet() {
-	   Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-	    String userId = (String) auth.getPrincipal(); 
-		return ResponseEntity.ok("Hello user: " + userId);
-	}
 }

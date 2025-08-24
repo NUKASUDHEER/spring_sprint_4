@@ -30,9 +30,12 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
             .csrf(csrf -> csrf.disable())
+            .headers(headers -> headers.frameOptions(frame -> frame.disable()))
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/admin/**").hasRole("ADMIN")  // only admin
                 .requestMatchers("/user/**").hasRole("USER")    // only user
+                .requestMatchers("/booking/**", "/tracking/**", "/history/**").authenticated()
+                .requestMatchers("/h2-console/**").permitAll()
                 .anyRequest().permitAll()                       // ✅ all others open
             )
             .addFilterBefore(new JwtAuthFilter(), UsernamePasswordAuthenticationFilter.class);
@@ -49,10 +52,13 @@ public class SecurityConfig {
             String path = request.getRequestURI();
 
             // ✅ Skip JWT check for non-protected routes
-            if (!path.startsWith("/admin") && !path.startsWith("/user")) {
-                filterChain.doFilter(request, response);
-                return;
-            }
+            if (!(path.startsWith("/admin") || path.startsWith("/user") 
+	    		   || path.startsWith("/booking") || path.startsWith("/tracking") 
+	    		   || path.startsWith("/history"))) {
+	    		    filterChain.doFilter(request, response);
+	    		    return;
+    		}
+
 
             String authHeader = request.getHeader("Authorization");
             if (authHeader != null && authHeader.startsWith("Bearer ")) {
